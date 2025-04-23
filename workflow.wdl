@@ -10,7 +10,7 @@ task get_chrom_sizes {
     >>>
 
     runtime {
-        docker: "quay.io/repository/curl/curl:latest"
+        docker: "quay.io/curl/curl:latest"
     }
     
     output {
