@@ -1,17 +1,31 @@
 version 1.0
 
-task convert_file {
+task get_chrom_sizes {
     input {
         String chrom_url
+    }
+
+    command <<<
+        curl '~{chrom_url}' > 'chrom.sizes'
+    >>>
+    
+    output {
+        File chrom_sizes = "chrom.sizes"
+    }
+}
+
+task convert_file {
+    input {
         File bedfile
+        File chrom_sizes
     }
 
     command <<<
         # see https://genome.ucsc.edu/goldenpath/help/bigBed.html
         # TODO: remove track and browser data
         # TODO: also get extra fields
-        curl '~{chrom_url}' > 'chrom.sizes'
-        bedToBigBed -sort '~{bedfile}' 'chrom.sizes' 'converted_bigbed_file.bb'
+        sort '~{bedfile}' --output='sorted_bed'
+        bedToBigBed 'sorted_bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
     >>>
 
     runtime {
@@ -19,7 +33,6 @@ task convert_file {
     }
 
     output {
-        File chrom_sizes = "chrom.sizes"
         File bigbed = "converted_bigbed_file.bb"
     }
 }
@@ -31,13 +44,19 @@ workflow convert {
         File bedfile
     }
 
+    call get_chrom_sizes {
+        input:
+        chrom_url = chrom_url
+    }
+
     call convert_file {
-        input: chrom_url = chrom_url,
+        input:
+        chrom_sizes = get_chrom_sizes.chrom_sizes,
         bedfile = bedfile
     }
 
     output {
-        File chrom_sizes = convert_file.chrom_sizes
+        File chrom_sizes = get_chrom_sizes.chrom_sizes
         File bigbed = convert_file.bigbed
     }
 }
