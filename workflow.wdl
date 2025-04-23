@@ -8,6 +8,10 @@ task get_chrom_sizes {
     command <<<
         curl '~{chrom_url}' > 'chrom.sizes'
     >>>
+
+    runtime {
+        docker: "https://quay.io/repository/curl/curl:latest"
+    }
     
     output {
         File chrom_sizes = "chrom.sizes"
