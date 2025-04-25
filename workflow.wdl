@@ -6,11 +6,11 @@ task get_chrom_sizes {
     }
 
     command <<<
-        curl '~{chrom_url}' > 'chrom.sizes'
+        wget '~{chrom_url}' -o 'chrom.sizes'
     >>>
 
     runtime {
-        docker: "quay.io/curl/curl:latest"
+        docker: "ubuntu:latest"
     }
     
     output {
