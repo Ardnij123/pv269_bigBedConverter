@@ -54,8 +54,8 @@ workflow convert {
 
   call convert_file {
     input:
-    bedfile = bedfile
-    chrom_sizes = get_chrom_sizes.chrom_sizes,
+    bedfile = bedfile,
+    chrom_sizes = get_chrom_sizes.chrom_sizes
   }
 
   output {
