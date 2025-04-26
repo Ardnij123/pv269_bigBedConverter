@@ -6,7 +6,7 @@ task get_chrom_sizes {
   }
 
   command <<<
-    wget '~{chrom_url}' -o 'chrom.sizes'
+    wget '~{chrom_url}' --output-document='chrom.sizes'
   >>>
 
   runtime {
