@@ -25,14 +25,15 @@ task convert_file {
   }
 
   command <<<
-    wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed
-    chmod a+x bedToBigBed
+    # see https://genome.ucsc.edu/goldenpath/help/bigBed.html
+    # TODO: remove track and browser data
+    # TODO: also get extra fields
     sort -k1,1 -k2,2n '~{bedfile}' > 'sorted_bed'
-    ./bedToBigBed 'sorted_bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
+    bedToBigBed 'sorted_bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
   >>>
 
   runtime {
-    docker: "quay.io/biocontainers/wget:1.20.1"
+    docker: "quay.io/biocontainers/ucsc-bedtobigbed:473--h52f6b31_1"
   }
 
   output {
@@ -54,8 +55,8 @@ workflow convert {
 
   call convert_file {
     input:
-    bedfile = bedfile
     chrom_sizes = get_chrom_sizes.chrom_sizes,
+    bedfile = bedfile
   }
 
   output {
