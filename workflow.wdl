@@ -28,7 +28,7 @@ task convert_file {
     # see https://genome.ucsc.edu/goldenpath/help/bigBed.html
     # TODO: remove track and browser data
     # TODO: also get extra fields
-    sort '~{bedfile}' --output='sorted_bed'
+    sort -k1,1 -k2,2n '~{bedfile}' > 'sorted_bed'
     bedToBigBed 'sorted_bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
   >>>
 
