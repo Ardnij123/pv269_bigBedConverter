@@ -18,29 +18,26 @@ task get_chrom_sizes {
   }
 }
 
-# Taken from https://github.com/ENCODE-DCC/segway-pipeline/blob/dev/segway.wdl#L290
 task convert_file {
   input {
     File bedfile
     File chrom_sizes
   }
 
-  String output_stem = "converted_bigbed_file"
-
   command <<<
-    set -euxo pipefail
+    # see https://genome.ucsc.edu/goldenpath/help/bigBed.html
     bedfile='~{bedfile}'
     if [ "${bedfile##*.}" == "gz" ]; then
       gzip -dc '~{bedfile}' > '~{output_stem}.bed'
     else
       cp '~{bedfile}' '~{output_stem}.bed'
     fi
-    bedToBigBed '~{output_stem}.bed' '~{chrom_sizes}' '~{output_stem}.bb'
-    gzip -n '~{output_stem}.bed'
+    sort -k1,1 -k2,2n '~{output_stem}.bed' > 'sorted_file.bed'
+    bedToBigBed 'sorted_file.bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
   >>>
 
   runtime {
-    docker: "encodedcc/segway-pipeline:1.2.0"
+    docker: "quay.io/biocontainers/ucsc-bedtobigbed:473--h52f6b31_1"
   }
 
   output {
@@ -62,8 +59,8 @@ workflow convert {
 
   call convert_file {
     input:
-    bedfile = bedfile,
-    chrom_sizes = get_chrom_sizes.chrom_sizes
+    chrom_sizes = get_chrom_sizes.chrom_sizes,
+    bedfile = bedfile
   }
 
   output {
