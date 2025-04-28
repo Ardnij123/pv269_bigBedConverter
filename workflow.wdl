@@ -25,7 +25,7 @@ task convert_file {
     File chrom_sizes
   }
 
-	File output_stem = "converted_bigbed_file"
+	String output_stem = "converted_bigbed_file"
 
   command <<<
 		set -euxo pipefail
