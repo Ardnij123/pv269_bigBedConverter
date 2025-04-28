@@ -29,7 +29,7 @@ task convert_file {
 
   command <<<
 		set -euxo pipefail
-		gzip -dc ~{bed} > ~{output_stem}.bed
+		gzip -dc ~{bedfile} > ~{output_stem}.bed
 		bedToBigBed ~{output_stem}.bed ~{chrom_sizes} ~{output_stem}.bb
 		gzip -n ~{output_stem}.bed
   >>>
