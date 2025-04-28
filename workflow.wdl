@@ -36,7 +36,6 @@ task convert_file {
       cp '~{bedfile}' '~{output_stem}.bed'
     fi
 		bedToBigBed '~{output_stem}.bed' '~{chrom_sizes}' '~{output_stem}.bb'
-		gzip -n '~{output_stem}.bed'
   >>>
 
   runtime {
