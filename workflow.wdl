@@ -39,7 +39,7 @@ task convert_file {
   }
 
   output {
-    File bigbed = output_stem + ".bb"
+    File bigbed = "converted_bigbed_file.bb"
   }
 }
 
