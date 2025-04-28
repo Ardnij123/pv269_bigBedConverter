@@ -18,25 +18,28 @@ task get_chrom_sizes {
   }
 }
 
+# Taken from https://github.com/ENCODE-DCC/segway-pipeline/blob/dev/segway.wdl#L290
 task convert_file {
   input {
     File bedfile
     File chrom_sizes
   }
 
+	File output_stem = "converted_bigbed_file"
+
   command <<<
-    wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed
-    chmod a+x bedToBigBed
-    sort -k1,1 -k2,2n '~{bedfile}' > 'sorted_bed'
-    ./bedToBigBed 'sorted_bed' '~{chrom_sizes}' 'converted_bigbed_file.bb'
+		set -euxo pipefail
+		gzip -dc ~{bed} > ~{output_stem}.bed
+		bedToBigBed ~{output_stem}.bed ~{chrom_sizes} ~{output_stem}.bb
+		gzip -n ~{output_stem}.bed
   >>>
 
   runtime {
-    docker: "quay.io/biocontainers/wget:1.20.1"
+    docker: "encodedcc/segway-pipeline:1.2.0"
   }
 
   output {
-    File bigbed = "converted_bigbed_file.bb"
+    File bigbed = output_stem + ".bb"
   }
 }
 
