@@ -25,13 +25,14 @@ task convert_file {
     File chrom_sizes
   }
 
-	String output_stem = "converted_bigbed_file"
+  String output_stem = "converted_bigbed_file"
 
   command <<<
-		set -euxo pipefail
+    set -euxo pipefail
+    # gzip -dc '~{bedfile}' > '~{output_stem}.bed'
     cp '~{bedfile}' '~{output_stem}.bed'
-		bedToBigBed '~{output_stem}.bed' '~{chrom_sizes}' '~{output_stem}.bb'
-		gzip -n '~{output_stem}.bed'
+    bedToBigBed '~{output_stem}.bed' '~{chrom_sizes}' '~{output_stem}.bb'
+    gzip -n '~{output_stem}.bed'
   >>>
 
   runtime {
