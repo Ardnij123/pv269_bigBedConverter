@@ -24,6 +24,8 @@ task convert_file {
     File chrom_sizes
   }
 
+  String output_stem = "converted_bigbed_file"
+
   command <<<
     # see https://genome.ucsc.edu/goldenpath/help/bigBed.html
     bedfile='~{bedfile}'
