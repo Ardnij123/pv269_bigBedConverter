@@ -29,7 +29,12 @@ task convert_file {
 
   command <<<
 		set -euxo pipefail
-		gzip -dc '~{bedfile}' > '~{output_stem}.bed'
+    bedfile='~{bedfile}'
+    if [ "${bedfile##*.}" == "gz" ]; then
+  		gzip -dc '~{bedfile}' > '~{output_stem}.bed'
+    else
+      cp '~{bedfile}' '~{output_stem}.bed'
+    fi
 		bedToBigBed '~{output_stem}.bed' '~{chrom_sizes}' '~{output_stem}.bb'
 		gzip -n '~{output_stem}.bed'
   >>>
